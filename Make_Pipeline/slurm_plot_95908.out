@@ -1,0 +1,4 @@
+--- SLURM Plotting Job Started ---
+Input data file: results/dat/abyss.dat
+Output plot file: results/png/abyss.png
+--- SLURM Plotting Job Finished ---

@@ -1,0 +1,26 @@
+Running with 2 nodes, 2 processes/node, and 6 threads/process.
+===============================================================================
+Hello from thread 4 out of 6 from process 0 out of 4 on aolin11.uab.cat ; SLEEP: 50
+Hello from thread 0 out of 6 from process 0 out of 4 on aolin11.uab.cat ; SLEEP: 50
+Hello from thread 3 out of 6 from process 0 out of 4 on aolin11.uab.cat ; SLEEP: 50
+Hello from thread 2 out of 6 from process 0 out of 4 on aolin11.uab.cat ; SLEEP: 50
+Hello from thread 1 out of 6 from process 0 out of 4 on aolin11.uab.cat ; SLEEP: 50
+Hello from thread 5 out of 6 from process 0 out of 4 on aolin11.uab.cat ; SLEEP: 50
+Hello from thread 2 out of 6 from process 1 out of 4 on aolin11.uab.cat ; SLEEP: 50
+Hello from thread 3 out of 6 from process 1 out of 4 on aolin11.uab.cat ; SLEEP: 50
+Hello from thread 0 out of 6 from process 1 out of 4 on aolin11.uab.cat ; SLEEP: 50
+Hello from thread 1 out of 6 from process 1 out of 4 on aolin11.uab.cat ; SLEEP: 50
+Hello from thread 5 out of 6 from process 1 out of 4 on aolin11.uab.cat ; SLEEP: 50
+Hello from thread 4 out of 6 from process 1 out of 4 on aolin11.uab.cat ; SLEEP: 50
+Hello from thread 0 out of 6 from process 2 out of 4 on aolin15.uab.cat ; SLEEP: 50
+Hello from thread 4 out of 6 from process 2 out of 4 on aolin15.uab.cat ; SLEEP: 50
+Hello from thread 3 out of 6 from process 2 out of 4 on aolin15.uab.cat ; SLEEP: 50
+Hello from thread 2 out of 6 from process 2 out of 4 on aolin15.uab.cat ; SLEEP: 50
+Hello from thread 1 out of 6 from process 2 out of 4 on aolin15.uab.cat ; SLEEP: 50
+Hello from thread 5 out of 6 from process 2 out of 4 on aolin15.uab.cat ; SLEEP: 50
+Hello from thread 3 out of 6 from process 3 out of 4 on aolin15.uab.cat ; SLEEP: 50
+Hello from thread 4 out of 6 from process 3 out of 4 on aolin15.uab.cat ; SLEEP: 50
+Hello from thread 0 out of 6 from process 3 out of 4 on aolin15.uab.cat ; SLEEP: 50
+Hello from thread 1 out of 6 from process 3 out of 4 on aolin15.uab.cat ; SLEEP: 50
+Hello from thread 5 out of 6 from process 3 out of 4 on aolin15.uab.cat ; SLEEP: 50
+Hello from thread 2 out of 6 from process 3 out of 4 on aolin15.uab.cat ; SLEEP: 50

@@ -1,0 +1,6 @@
+total 16
+-rw-r--r-- 1 ppm-43 ppm  43 Oct  2 16:03 customfilejob93514.txt
+-rw-r--r-- 1 ppm-43 ppm  45 Oct  2 15:59 myfile.txt
+-rw-r--r-- 1 ppm-43 ppm 222 Oct  2 16:02 param_script.sh
+-rw-r--r-- 1 ppm-43 ppm 174 Oct  2 16:00 slurm-93497.out
+-rw-r--r-- 1 ppm-43 ppm   0 Oct  2 16:03 slurm-93514.out
