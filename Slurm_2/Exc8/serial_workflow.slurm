@@ -8,7 +8,7 @@
 echo "--- Starting Serial Workflow ---"
 start=$(date +%s)
 
-# Execute using the QUOTED full path
+# Execute six instances of the program sequentially.
 "$SLURM_SUBMIT_DIR/serial_pi"
 "$SLURM_SUBMIT_DIR/serial_pi"
 "$SLURM_SUBMIT_DIR/serial_pi"

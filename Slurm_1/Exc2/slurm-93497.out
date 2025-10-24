@@ -1,4 +1,0 @@
-total 8
--rw-r--r-- 1 ppm-43 ppm  45 Oct  2 15:59 myfile.txt
--rw-r--r-- 1 ppm-43 ppm 230 Oct  2 15:59 param_script.sh
--rw-r--r-- 1 ppm-43 ppm   0 Oct  2 15:59 slurm-93497.out

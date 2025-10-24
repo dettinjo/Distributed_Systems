@@ -4,19 +4,18 @@
 #SBATCH --partition=cuda-ext.q
 #SBATCH --output=balanced_16_%j.out
 
-
-# Request a total of 2 nodes for the job
+# Request 2 nodes for this job.
 #SBATCH --nodes=2
 
-# Request a total of 16 tasks to be executed
+# Request a total of 16 tasks.
 #SBATCH --ntasks=16
 
-# CRITICAL: Specify that exactly 8 tasks should be run on each node
+# Ensure an even distribution by assigning 8 tasks to each node.
 #SBATCH --ntasks-per-node=8
 
 echo "Executing 16 tasks balanced across 2 nodes..."
 echo "---------------------------------------------"
 
-# srun will launch 16 instances of the 'hostname' command.
-# We pipe the output to 'sort' and 'uniq -c' to count the executions on each node.
+# srun launches the hostname command on all allocated tasks.
+# The output is then sorted and counted to verify the distribution.
 srun hostname | sort | uniq -c

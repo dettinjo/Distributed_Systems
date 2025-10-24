@@ -7,15 +7,16 @@
 
 echo "--- Starting file sort using a for loop ---"
 
-# Loop through the file numbers 0 to 3
+# Iterate through the files numbered 0 to 3.
 for i in {0..3}
 do
-  # Define input and output file names
+  # Set the input and output filenames for the current iteration.
   input_file="$SLURM_SUBMIT_DIR/names_${i}.txt"
   output_file="$SLURM_SUBMIT_DIR/names_${i}.sorted"
 
   echo "Sorting $input_file -> $output_file"
   
+  # Run the sort command.
   sort "$input_file" > "$output_file"
 done
 
