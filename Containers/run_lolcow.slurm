@@ -7,8 +7,8 @@
 
 echo "--- Running lolcow container in batch mode ---"
 
-# Execute the container using its full path.
-# The double quotes handle any spaces in the directory path.
+# Execute the container's default runscript by calling the .sif file directly.
+# The path is resolved using the SLURM_SUBMIT_DIR variable.
 "$SLURM_SUBMIT_DIR/lolcow.sif"
 
 echo "--- Container run finished. ---"
