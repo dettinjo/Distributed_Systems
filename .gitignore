@@ -1,1 +1,43 @@
+# Terraform state and backup
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+crash.log
+
+# Local CLI crash files
+*.log
+
+# Env files, secrets, variables
+*.env
+*.tfvars
+*.tfvars.json
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Editor/project files
+.idea/
+.vscode/
+*.swp
+*~
+
+# Coverage/reports
+coverage/
+*.out
+
+# MacOS file attributes
+._*
+
+# Node (if using tools)
+node_modules/
+
+# Python __pycache__ etc (for provisioning scripts)
+__pycache__/
+*.pyc
+
+# Misc
+*.bak
+*.tmp
 *.sif

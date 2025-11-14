@@ -1,0 +1,13 @@
+variable "region" {}
+variable "rg_name" {}
+variable "vnet_name" {}
+variable "public_subnet_name" {}
+variable "public_subnet_prefix" {}
+variable "private_subnet_name" {}
+variable "private_subnet_prefix" {}
+variable "address_space" {}
+variable "admin_username" {}
+variable "admin_ssh_key" {}
+variable "ssh_ip" {}
+variable "vm_name_public" {}
+variable "vm_name_private" {}
