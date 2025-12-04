@@ -24,6 +24,6 @@ output "private_subnet_id" {
 
 # Commented out by default. Enable for transformation:
 
-/* output "private_vm_public_ip" {
+output "private_vm_public_ip" {
   value = azurerm_public_ip.private.ip_address
-} */
+}

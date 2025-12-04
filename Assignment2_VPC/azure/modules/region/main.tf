@@ -63,13 +63,13 @@ resource "azurerm_public_ip" "public" {
 }
 
 # --- TRANSFORMATION STEP: UNCOMMENT TO MAKE PRIVATE VM PUBLIC ---
-/* resource "azurerm_public_ip" "private" {
+resource "azurerm_public_ip" "private" {
   name                = "${var.vnet_name}-private-publicip"
   location            = var.region
   resource_group_name = azurerm_resource_group.this.name
   allocation_method   = "Static"
   sku                 = "Standard"
-} */
+}
 
 resource "azurerm_network_security_group" "web" {
   name                = "${var.vnet_name}-nsg"
@@ -145,7 +145,7 @@ resource "azurerm_network_interface" "private" {
     subnet_id                     = azurerm_subnet.private.id
     private_ip_address_allocation = "Dynamic"
     # UNCOMMENT FOR TRANSFORMATION:
-    # public_ip_address_id          = azurerm_public_ip.private.id   
+    public_ip_address_id          = azurerm_public_ip.private.id   
   }
 }
 
