@@ -12,5 +12,5 @@ green_region  = "francecentral"
 
 # 3. Traffic Weights (Blue/Green Split)
 # Change these values to shift traffic. Total should ideally equal 100.
-blue_weight   = 50
-green_weight  = 50
+blue_weight   = 10
+green_weight  = 90
