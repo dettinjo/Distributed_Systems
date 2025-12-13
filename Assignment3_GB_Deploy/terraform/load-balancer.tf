@@ -1,6 +1,6 @@
-# Public IP for Application Gateway
-resource "azurerm_public_ip" "app_gateway" {
-  name                = "${var.project_name}-agw-pip-${random_string.suffix.result}"
+# Public IP for Load Balancer
+resource "azurerm_public_ip" "lb" {
+  name                = "${var.project_name}-lb-pip-${random_string.suffix.result}"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
   allocation_method   = "Static"
@@ -12,80 +12,67 @@ resource "azurerm_public_ip" "app_gateway" {
   }
 }
 
-# Application Gateway - Simplified
-resource "azurerm_application_gateway" "main" {
-  name                = "${var.project_name}-agw-${random_string.suffix.result}"
+# Load Balancer
+resource "azurerm_lb" "main" {
+  name                = "${var.project_name}-lb-${random_string.suffix.result}"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
-
-  sku {
-    name     = "Standard_v2"
-    tier     = "Standard_v2"
-    capacity = 1
-  }
-
-  gateway_ip_configuration {
-    name      = "appGatewayIpConfig"
-    subnet_id = azurerm_subnet.public.id
-  }
-
-  frontend_port {
-    name = "http-port"
-    port = 80
-  }
+  sku                 = "Standard"
 
   frontend_ip_configuration {
-    name                 = "appGatewayFrontendIP"
-    public_ip_address_id = azurerm_public_ip.app_gateway.id
-  }
-
-  # Blue Backend Pool
-  backend_address_pool {
-    name = "blue-backend-pool"
-    ip_addresses = [azurerm_network_interface.blue_vm.private_ip_address]
-  }
-
-  # Green Backend Pool  
-  backend_address_pool {
-    name = "green-backend-pool"
-    ip_addresses = [azurerm_network_interface.green_vm.private_ip_address]
-  }
-
-  # HTTP Settings
-  backend_http_settings {
-    name                  = "http-settings"
-    cookie_based_affinity = "Disabled"
-    path                  = "/"
-    port                  = 80
-    protocol              = "Http"
-    request_timeout       = 60
-  }
-
-  # HTTP Listener
-  http_listener {
-    name                           = "http-listener"
-    frontend_ip_configuration_name = "appGatewayFrontendIP"
-    frontend_port_name             = "http-port"
-    protocol                       = "Http"
-  }
-
-  # Request Routing Rule - Start with Blue environment
-  request_routing_rule {
-    name                       = "blue-routing-rule"
-    rule_type                  = "Basic"
-    http_listener_name         = "http-listener"
-    backend_address_pool_name  = "blue-backend-pool"
-    backend_http_settings_name = "http-settings"
-    priority                   = 100
+    name                 = "frontend-ip"
+    public_ip_address_id = azurerm_public_ip.lb.id
   }
 
   tags = {
     Project = var.project_name
     Component = "LoadBalancer"
   }
+}
 
-  depends_on = [
-    azurerm_linux_virtual_machine.blue,
-    azurerm_linux_virtual_machine.green
-  ]
+# Backend Address Pool for Blue
+resource "azurerm_lb_backend_address_pool" "blue" {
+  loadbalancer_id = azurerm_lb.main.id
+  name            = "blue-backend-pool"
+}
+
+# Backend Address Pool for Green
+resource "azurerm_lb_backend_address_pool" "green" {
+  loadbalancer_id = azurerm_lb.main.id
+  name            = "green-backend-pool"
+}
+
+# Health Probe
+resource "azurerm_lb_probe" "http" {
+  loadbalancer_id = azurerm_lb.main.id
+  name            = "http-probe"
+  protocol        = "Http"
+  request_path    = "/"
+  port            = 80
+}
+
+# Load Balancing Rule - Start with Blue
+resource "azurerm_lb_rule" "http" {
+  loadbalancer_id                = azurerm_lb.main.id
+  name                           = "http-rule"
+  protocol                       = "Tcp"
+  frontend_port                  = 80
+  backend_port                   = 80
+  frontend_ip_configuration_name = "frontend-ip"
+  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.blue.id]
+  probe_id                       = azurerm_lb_probe.http.id
+}
+
+# Associate Blue VM with Blue Backend Pool
+resource "azurerm_network_interface_backend_address_pool_association" "blue" {
+  network_interface_id    = azurerm_network_interface.blue_vm.id
+  ip_configuration_name   = "internal"
+  backend_address_pool_id = azurerm_lb_backend_address_pool.blue.id
+}
+
+# Associate Green VM with Green Backend Pool
+resource "azurerm_network_interface_backend_address_pool_association" "green" {
+  network_interface_id    = azurerm_network_interface.green_vm.id
+  ip_configuration_name   = "internal"
+  backend_address_pool_id = azurerm_lb_backend_address_pool.green.id
 }

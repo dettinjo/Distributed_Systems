@@ -7,7 +7,7 @@ variable "location" {
 variable "resource_group_name" {
   description = "Name of the resource group"
   type        = string
-  default     = "rg-blue-green-deployment"
+  default     = "rg-blue-green-v2"
 }
 
 variable "project_name" {
