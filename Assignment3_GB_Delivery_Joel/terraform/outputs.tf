@@ -12,3 +12,13 @@ output "green_regional_ip" {
   description = "Direct IP for Green LB (France)"
   value       = module.green_env.public_ip
 }
+
+output "blue_weight" {
+  description = "Configured weight for Blue environment"
+  value       = var.blue_weight
+}
+
+output "green_weight" {
+  description = "Configured weight for Green environment"
+  value       = var.green_weight
+}
