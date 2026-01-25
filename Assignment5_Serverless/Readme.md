@@ -1,11 +1,14 @@
 # Serverless AI Image Analyzer (Azure)
 
 ## 📌 Project Overview
-This project is a **Serverless Image Analysis Pipeline** built on **Microsoft Azure**. It is a migration of the "AI as a Service" Lab (originally AWS) to the Azure ecosystem.
+This project is a **Serverless Image Analysis Pipeline** built on **Microsoft Azure**. It serves as a migration of the "AI as a Service" Lab (originally AWS) to the Azure ecosystem.
 
-The system accepts an image URL, downloads it, and uses **Azure AI Vision (OCR)** to detect text and calculate confidence scores.
+The system accepts an image URL, downloads it, and leverages **Azure AI Vision (OCR)** to detect text and calculate confidence scores.
 
-### 🏗 Architecture
+### 🏗 Architecture 
+
+[Image of Azure Serverless Architecture Diagram]
+
 The system follows an event-driven serverless architecture:
 
 1.  **Crawler (Azure Function - HTTP Trigger):**
@@ -16,8 +19,8 @@ The system follows an event-driven serverless architecture:
 
 2.  **Analyzer (Azure Function - Queue Trigger):**
     * Triggered automatically when a message arrives in the queue.
-    * Reads the image from Blob Storage.
-    * Sends the image to **Azure AI Vision (Read API)**.
+    * Reads the image from Blob Storage using a buffer stream.
+    * Sends the image buffer to **Azure AI Vision (Read API)**.
     * Extracts text and calculates average confidence scores.
     * Saves the result as a JSON file in **Blob Storage** (`analysis-results` container).
 
@@ -105,7 +108,8 @@ curl -X POST http://localhost:7071/api/crawler \
 3. **Check Output:**
 Check the terminal running `func start`. You should see logs indicating:
 * `[Crawler]` Image uploaded to blob...
-* `[Analyzer]` Analysis complete...
+* `[Analyzer]` Downloaded image. Size: ... bytes
+* `[Analyzer]` Analysis complete. Saved to ...
 
 
 
@@ -122,7 +126,7 @@ func azure functionapp publish <APP_NAME>
 
 ```
 
-**Note:** You do **not** need to upload settings (`--publish-local-settings`) because Terraform has already configured the Function App environment variables in the cloud.
+**Note:** Ensure your Function App is **started** in the Azure Portal or CLI (`az functionapp start`) before deploying to ensure triggers sync correctly.
 
 ### Verifying Deployment
 
@@ -147,40 +151,21 @@ az storage blob list --account-name <STORAGE_ACCOUNT_NAME> --container-name anal
 
 ---
 
-## 🐛 Troubleshooting & Known Issues
+## 🐛 Technical Implementation Notes & Fixes
 
-### 1. "Tainted" Terraform State
+### 1. "Image Stream" Compatibility Fix
 
-* **Symptom:** Terraform errors saying a resource is "tainted".
-* **Cause:** A previous deployment failed halfway.
-* **Fix:** Run `terraform apply -auto-approve`. Terraform will destroy and recreate the broken resource automatically.
+The Azure AI Vision SDK (`readInStream`) has known compatibility issues with certain Node.js stream implementations from the Storage SDK.
 
-### 2. Git Push Blocked (Secret Scanning)
+* **Fix:** The code in `analyzer/index.js` uses `blobClient.downloadToBuffer()` instead of streaming directly. This ensures the full image is loaded into memory as a buffer before being sent to the AI service, preventing data stream errors.
 
-* **Symptom:** GitHub rejects your push with "Secret Scanning" errors.
-* **Cause:** You accidentally committed `local.settings.json`.
-* **Fix:**
-```bash
-git reset --soft HEAD~1
-git restore --staged src/local.settings.json
-echo "src/local.settings.json" >> .gitignore
-git commit -m "Fixed secrets"
-git push
+### 2. Anonymous Authentication
 
-```
+* The `crawler` function is configured with `"authLevel": "anonymous"` in `function.json`. This allows `curl` requests to trigger the HTTP endpoint without requiring an API key (Function Key) in the URL or header.
 
+### 3. Git Push Protection
 
-
-### 3. Curl 401 Unauthorized
-
-* **Symptom:** `curl` returns `HTTP/1.1 401 Unauthorized`.
-* **Cause:** The function expects an API key (Function Level Auth).
-* **Fix:** Ensure `src/crawler/function.json` has `"authLevel": "anonymous"`, then redeploy.
-
-### 4. Permission Errors (RBAC)
-
-* **Symptom:** `az storage blob list` says "AuthorizationPermissionMismatch".
-* **Fix:** Use `--auth-mode key` to use the storage account key instead of your user identity, OR assign yourself the "Storage Blob Data Owner" role in the portal.
+* The repository is configured to ignore sensitive files (`local.settings.json`, `repomix-output.xml`). If you encounter push rejections due to secrets, ensure you have not accidentally committed generated files containing keys.
 
 ---
 
@@ -193,7 +178,11 @@ git push
 │   └── modules/            # Reusable modules (compute, storage, ai)
 ├── src/                    # Application Source Code
 │   ├── analyzer/           # Azure Function: Queue Trigger (Vision Analysis)
+│   │   ├── function.json   # Trigger Binding (Queue)
+│   │   └── index.js        # Logic: Download -> Vision API -> Save JSON
 │   ├── crawler/            # Azure Function: HTTP Trigger (Downloader)
+│   │   ├── function.json   # Trigger Binding (HTTP Anonymous)
+│   │   └── index.js        # Logic: Download URL -> Save Blob -> Queue Msg
 │   ├── local.settings.json # (Ignored) Local secrets
 │   └── package.json        # Dependencies
 └── setup-local-env.sh      # Helper script to generate local settings
