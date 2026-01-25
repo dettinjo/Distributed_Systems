@@ -40,3 +40,4 @@ __pycache__/
 *.bak
 *.tmp
 *.sif
+local.settings.json
