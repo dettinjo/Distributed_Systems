@@ -41,3 +41,4 @@ __pycache__/
 *.tmp
 *.sif
 local.settings.json
+repomix-output.xml
